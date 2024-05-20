@@ -41,9 +41,9 @@ typedef struct WIN_ARGS {
     
 } WIN_ARGS;
 
-class InitProcess {
+class WindowManager {
 public:
-    InitProcess() {
+    WindowManager() {
         tkns = {""};
         wc = nullptr;
         hInst = NULL;
@@ -55,7 +55,7 @@ public:
         msg = { 0 };
     }
 
-    InitProcess(WNDCLASSW *window, HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, LPCWSTR class_name, LPCWSTR win_title) {
+    WindowManager(WNDCLASSW *window, HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, LPCWSTR class_name, LPCWSTR win_title) {
         wc = window;
         hInst = instH;
         args = argv;
@@ -64,7 +64,7 @@ public:
         msg = { 0 };
     }
 
-    ~InitProcess() {
+    ~WindowManager() {
         wc = nullptr;
         hInst = NULL;
         hPrevInst = NULL;
