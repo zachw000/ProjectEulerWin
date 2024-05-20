@@ -15,8 +15,8 @@ struct WIN_SETTINGS {
     int ypos = 100;
     int width = 800;
     int height = 600;
-    LPCWSTR className = L"ProjectEulerWin";
-    LPCWSTR winTitle = L"Project Euler Solver";
+    LPCWSTR className = L"DefaultWin";
+    LPCWSTR winTitle = L"Default Title";
 } WIN_SETTINGS;
 
 typedef struct WIN_ARGS {

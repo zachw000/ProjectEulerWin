@@ -2,23 +2,25 @@
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int nCmdShow) {
     // Pass window arguments
-    WIN_ARGS wa = WIN_ARGS(hInst, hPrevInst, args, nCmdShow);
+    WIN_ARGS w_args = WIN_ARGS(hInst, hPrevInst, args, nCmdShow);
     
     // Creates Window object
-    InitProcess loop_initialize = InitProcess();
+    InitProcess gui_initialize = InitProcess();
 
     // Set window to 1280x720 resolution
     WIN_SETTINGS.width = 1280;
     WIN_SETTINGS.height = 720;
+    WIN_SETTINGS.winTitle = L"DreamScape Modpack Manager";
+    WIN_SETTINGS.className = L"DreamScapeManager";
 
     // Register window
-    if (!loop_initialize.register_window(wa, WIN_SETTINGS))
+    if ( !gui_initialize.register_window(w_args, WIN_SETTINGS))
         return -1;
     
     // Create window
-    loop_initialize.create_window(wa, WIN_SETTINGS);
+    gui_initialize.create_window(w_args, WIN_SETTINGS);
 
     // Initialize GUI interface
-    loop_initialize.gui_loop();
+    gui_initialize.gui_loop();
     return 0;
 }
