@@ -4,3 +4,8 @@
 *.obj
 bin/
 lib/
+src/init.exe
+src/init.ilk
+src/init.obj
+src/init.pdb
+src/vc140.pdb

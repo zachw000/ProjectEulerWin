@@ -1,6 +1,7 @@
 #pragma once
 #ifndef INIT
 #define INIT
+
 // STD Includes
 #include <iostream>
 #include <complex>
@@ -8,6 +9,37 @@
 #include <string>
 #include <math.h>
 #include <windows.h>
+
+struct WIN_SETTINGS {
+    int xpos = 100;
+    int ypos = 100;
+    int width = 800;
+    int height = 600;
+    LPCWSTR className = L"ProjectEulerWin";
+    LPCWSTR winTitle = L"Project Euler Solver";
+} WIN_SETTINGS;
+
+typedef struct WIN_ARGS {
+    HINSTANCE hInst;
+    HINSTANCE hPrevInst;
+    LPSTR args;
+    int nCmdShow;
+
+    WIN_ARGS() {
+        hInst = NULL;
+        hPrevInst = NULL;
+        args = NULL;
+        nCmdShow = NULL;
+    }
+
+    WIN_ARGS(HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, int cmdShowN) {
+        hInst = instH;
+        hPrevInst = prevInstH;
+        args = argv;
+        nCmdShow = cmdShowN;
+    }
+    
+} WIN_ARGS;
 
 class InitProcess {
 public:
@@ -43,13 +75,7 @@ public:
         msg = { 0 };
     }
 
-    bool register_window(HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, LPCWSTR class_name, LPCWSTR win_title, int nCmdShow) {
-        hInst = instH;
-        hPrevInst = prevInstH;
-        args = argv;
-        className = class_name;
-        winTitle = win_title;
-
+    bool startWin() {
         WNDCLASSW wcw;
         wcw = {0};
         wc = &wcw;
@@ -63,8 +89,34 @@ public:
         return RegisterClassW(wc);
     }
 
+    bool register_window(WIN_ARGS wa, struct WIN_SETTINGS ws) {
+        hInst = wa.hInst;
+        hPrevInst = wa.hPrevInst;
+        args = wa.args;
+        className = ws.className;
+        winTitle = ws.winTitle;
+        nCmdShow = wa.nCmdShow;
+
+        return startWin();
+    }
+
+    bool register_window(HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, LPCWSTR class_name, LPCWSTR win_title, int cmdShowN) {
+        hInst = instH;
+        hPrevInst = prevInstH;
+        args = argv;
+        className = class_name;
+        winTitle = win_title;
+        nCmdShow = cmdShowN;
+
+        return startWin();
+    }
+
     void create_window(int posx, int posy, int wx, int hy, HWND parentH, HMENU menuH, HINSTANCE instH, LPVOID lp) {
         CreateWindowW(className, winTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, posx, posy, wx, hy, parentH, menuH, instH, lp);
+    }
+
+    void create_window(WIN_ARGS wa, struct WIN_SETTINGS ws) {
+        CreateWindowW(className, winTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, ws.xpos, ws.ypos, ws.width, ws.height, NULL, NULL, NULL, NULL);
     }
 
     int gui_loop() {

@@ -1,26 +1,22 @@
 #include "../inc/init.hpp"
 
-const struct WIN_SETTINGS {
-    int xpos = 100;
-    int ypos = 100;
-    int width = 800;
-    int height = 600;
-    LPCWSTR className = L"ProjectEulerWin";
-    LPCWSTR winTitle = L"Project Euler Solver";
-} WIN_SETTINGS;
-
-
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int nCmdShow) {
+    // Pass window arguments
+    WIN_ARGS wa = WIN_ARGS(hInst, hPrevInst, args, nCmdShow);
+    
     // Creates Window object
     InitProcess loop_initialize = InitProcess();
 
-    // Register and create window
-    if (!loop_initialize.register_window(hInst, hPrevInst, args, WIN_SETTINGS.className,
-         WIN_SETTINGS.winTitle, NULL)) 
-        return -1;
+    // Set window to 1280x720 resolution
+    WIN_SETTINGS.width = 1280;
+    WIN_SETTINGS.height = 720;
 
-    loop_initialize.create_window(WIN_SETTINGS.xpos, WIN_SETTINGS.ypos, 
-        WIN_SETTINGS.width, WIN_SETTINGS.height, NULL, NULL, NULL, NULL);
+    // Register window
+    if (!loop_initialize.register_window(wa, WIN_SETTINGS))
+        return -1;
+    
+    // Create window
+    loop_initialize.create_window(wa, WIN_SETTINGS);
 
     // Initialize GUI interface
     loop_initialize.gui_loop();
