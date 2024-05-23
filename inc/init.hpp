@@ -1,6 +1,4 @@
 #pragma once
-#ifndef INIT
-#define INIT
 
 // STD Includes
 #include <iostream>
@@ -9,15 +7,6 @@
 #include <string>
 #include <math.h>
 #include <windows.h>
-
-struct WIN_SETTINGS {
-    int xpos = 100;
-    int ypos = 100;
-    int width = 800;
-    int height = 600;
-    LPCWSTR className = L"DefaultWin";
-    LPCWSTR winTitle = L"Default Title";
-} WIN_SETTINGS;
 
 typedef struct WIN_ARGS {
     HINSTANCE hInst;
@@ -43,6 +32,15 @@ typedef struct WIN_ARGS {
 
 class WindowManager {
 public:
+    struct WIN_SETTINGS {
+        int xpos = WindowManager::DEFAULT_XY;
+        int ypos = WindowManager::DEFAULT_XY;
+        int width = WindowManager::DEFAULT_DIM_X;
+        int height = WindowManager::DEFAULT_DIM_Y;
+        LPCWSTR className = L"DefaultWin";
+        LPCWSTR winTitle = L"Default Window";
+    } WIN_SETTINGS;
+
     WindowManager() {
         tkns = {""};
         wc = nullptr;
@@ -55,12 +53,8 @@ public:
         msg = { 0 };
     }
 
-    WindowManager(WNDCLASSW *window, HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, LPCWSTR class_name, LPCWSTR win_title) {
-        wc = window;
-        hInst = instH;
-        args = argv;
-        className = class_name;
-        winTitle = win_title;
+    WindowManager(WNDCLASSW *window, HINSTANCE instH, HINSTANCE prevInstH, LPSTR argv, LPCWSTR class_name, LPCWSTR win_title)
+    : wc(window), hInst(instH), args(argv), className(class_name), winTitle(win_title) {
         msg = { 0 };
     }
 
@@ -75,26 +69,12 @@ public:
         msg = { 0 };
     }
 
-    bool startWin() {
-        WNDCLASSW wcw;
-        wcw = {0};
-        wc = &wcw;
-
-        wc->hbrBackground = (HBRUSH)COLOR_WINDOW;
-        wc->hCursor = LoadCursor(NULL, IDC_ARROW);
-        wc->hInstance = hInst;
-        wc->lpszClassName = className;
-        wc->lpfnWndProc = this->WindowProc;
-
-        return RegisterClassW(wc);
-    }
-
-    bool register_window(WIN_ARGS wa, struct WIN_SETTINGS ws) {
+    bool register_window(WIN_ARGS wa) {
         hInst = wa.hInst;
         hPrevInst = wa.hPrevInst;
         args = wa.args;
-        className = ws.className;
-        winTitle = ws.winTitle;
+        className = WIN_SETTINGS.className;
+        winTitle = WIN_SETTINGS.winTitle;
         nCmdShow = wa.nCmdShow;
 
         return startWin();
@@ -115,10 +95,12 @@ public:
         CreateWindowW(className, winTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, posx, posy, wx, hy, parentH, menuH, instH, lp);
     }
 
-    void create_window(WIN_ARGS wa, struct WIN_SETTINGS ws) {
-        CreateWindowW(className, winTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, ws.xpos, ws.ypos, ws.width, ws.height, NULL, NULL, NULL, NULL);
+    void create_window(WIN_ARGS wa) {
+        CreateWindowW(className, winTitle, WS_OVERLAPPEDWINDOW | WS_VISIBLE, WIN_SETTINGS.xpos, WIN_SETTINGS.ypos, WIN_SETTINGS.width, WIN_SETTINGS.height, NULL, NULL, NULL, NULL);
     }
 
+    /// @brief Initializes loop for running GUI application.
+    /// @return int exit_code
     int gui_loop() {
         while ( GetMessageW(&msg, NULL, NULL, NULL) ) {
             TranslateMessage(&msg);
@@ -128,6 +110,10 @@ public:
         return 0;
     }
 
+    // Define default constants
+    const static int DEFAULT_XY =  100;
+    const static int DEFAULT_DIM_X = 800;
+    const static int DEFAULT_DIM_Y = 600;
 private:
     void init_cmd_loop() {
         // TODO: Implement
@@ -139,6 +125,20 @@ private:
         }
     }
 
+    bool startWin() {
+        WNDCLASSW wcw;
+        wcw = {0};
+        wc = &wcw;
+
+        wc->hbrBackground = (HBRUSH)COLOR_WINDOW;
+        wc->hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc->hInstance = hInst;
+        wc->lpszClassName = className;
+        wc->lpfnWndProc = this->WindowProc;
+
+        return RegisterClassW(wc);
+    }
+
     MSG msg;
     std::vector<std::string> tkns;
     WNDCLASSW *wc;
@@ -147,6 +147,7 @@ private:
     LPSTR args;
     LPCWSTR className;
     LPCWSTR winTitle;
+
     int nCmdShow;
 protected:
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
@@ -161,4 +162,3 @@ protected:
         return NULL;
     }
 };
-#endif
